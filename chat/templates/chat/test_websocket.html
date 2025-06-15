@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+</head>
+<body>
+<h1>WebSocket Chat Test</h1>
+<input type="text" id="messageInput" placeholder="Type a message">
+<button onclick="sendMessage()">Send</button>
+<button onclick="reconnect()">Reconnect</button>
+<div id="messages"></div>
+<script>
+    let sessionUuid = null;
+    let socket = null;
+
+    function connect() {
+        const url = sessionUuid ?
+            `ws://localhost:8000/ws/chat/?session_uuid=${sessionUuid}` :
+            'ws://localhost:8000/ws/chat/';
+        socket = new WebSocket(url);
+        socket.onopen = () => console.log('Connected to WebSocket');
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.session_uuid) {
+                sessionUuid = data.session_uuid;
+                console.log('Session UUID:', sessionUuid);
+            }
+            document.getElementById('messages').innerText += JSON.stringify(data) + '\n';
+        };
+        socket.onclose = (event) => console.log('Disconnected with code:', event.code);
+        socket.onerror = (event) => console.error('WebSocket error:', event);
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(input.value);
+            input.value = '';
+        }
+    }
+
+    function reconnect() {
+        if (socket) {
+            socket.close();
+        }
+        connect();
+    }
+
+    connect();
+</script>
+</body>
+</html>
