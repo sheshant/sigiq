@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'mywebsite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-CHANNEL_LAYERS = {
+CHANNEL_LAYERS_REDIS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
@@ -85,6 +85,15 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+CHANNEL_LAYERS_DEV = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'CONFIG': {},
+    },
+}
+
+CHANNEL_LAYERS = CHANNEL_LAYERS_REDIS if os.environ.get('USE_REDIS', '1') == '1' else CHANNEL_LAYERS_DEV
 
 DATABASES = {
     'default': {

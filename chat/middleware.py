@@ -2,6 +2,13 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from channels.middleware import BaseMiddleware
 
 class AllowEmptyOriginValidator(BaseMiddleware):
+    """
+    Middleware to allow empty origin headers in WebSocket connections.
+    This is useful for development purposes where the origin might not be set.
+    It wraps the AllowedHostsOriginValidator to ensure that connections with no origin header
+    are still processed, while still validating allowed hosts.
+    This middleware should be used in development environments only, as it bypasses origin checks.
+    """
     def __init__(self, inner):
         self.inner = inner
         self.allowed_hosts_validator = AllowedHostsOriginValidator(inner)
