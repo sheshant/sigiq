@@ -1,10 +1,23 @@
+import logging
+
 from django.http import HttpResponse
 from django.shortcuts import render
 
 from .consumers import metrics as ws_metrics, metrics_lock as ws_metrics_lock
 from mywebsite.asgi import metrics as asgi_metrics, metrics_lock as asgi_metrics_lock
 
+
+logger = logging.getLogger('__name__')
+
 async def metrics_view(request):
+    """
+    View to expose WebSocket metrics in Prometheus format.
+    This view collects metrics from the WebSocket consumer and ASGI application,
+    and formats them for Prometheus scraping.
+    It includes total messages received, active connections,
+    error counts, and the last shutdown time of the ASGI application.
+    """
+
     async with ws_metrics_lock:
         total_messages = ws_metrics["total_messages"]
         active_connections = ws_metrics["active_connections"]

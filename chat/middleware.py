@@ -1,5 +1,10 @@
+import logging
+
 from channels.security.websocket import AllowedHostsOriginValidator
 from channels.middleware import BaseMiddleware
+
+
+logger = logging.getLogger('__name__')
 
 class AllowEmptyOriginValidator(BaseMiddleware):
     """

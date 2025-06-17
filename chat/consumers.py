@@ -11,8 +11,8 @@ from channels.layers import get_channel_layer
 logger = logging.getLogger('__name__')
 
 # In-memory store for session data (session_uuid -> message_count)
-session_store = {}
-session_store_lock = asyncio.Lock()
+session_store = {}  # Dictionary to store session UUIDs and their message counts
+session_store_lock = asyncio.Lock()  # Lock to ensure thread-safe access to the session store
 # Metrics
 metrics = {
     "total_messages": 0,

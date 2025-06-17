@@ -93,7 +93,7 @@ CHANNEL_LAYERS_DEV = {
     },
 }
 
-CHANNEL_LAYERS = CHANNEL_LAYERS_REDIS if os.environ.get('USE_REDIS', '1') == '1' else CHANNEL_LAYERS_DEV
+CHANNEL_LAYERS = CHANNEL_LAYERS_REDIS if os.environ.get('TESTING', '1') == '1' else CHANNEL_LAYERS_DEV
 
 DATABASES = {
     'default': {
