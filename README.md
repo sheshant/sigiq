@@ -37,3 +37,5 @@ you can also use `daphne -b 0.0.0.0 -p 8000 mywebsite.asgi:application` to run s
 in order to run docker you need to run `docker build -t django-channels-app .` 
 and then `docker run -p 80:80 --name django-channels-container django-channels-app`
 to build the image
+
+either run redis on port 6379 or run `export TESTING=1` on terminal

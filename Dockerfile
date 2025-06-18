@@ -1,32 +1,29 @@
-# Use Python 3.9 slim base image
+# Use an official Python runtime as a parent image
 FROM python:3.9-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Set the working directory in the container
+WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    redis-server \
-    nginx \
-    supervisor \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
-WORKDIR /app
-
-# Copy requirements file
+# Copy the requirements file into the container
 COPY requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY mywebsite/ mywebsite/
-COPY chat/ chat/
+# Copy the rest of the application code
+COPY . .
 
-# Copy Nginx and supervisord configurations
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Expose the port Daphne will run on
+EXPOSE 8000
 
-# Expose port 80 for Nginx
-EXPOSE 80
-
-# Run supervisord
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Run Daphne to serve the Django app with WebSocket support
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "mywebsite.asgi:application"]
